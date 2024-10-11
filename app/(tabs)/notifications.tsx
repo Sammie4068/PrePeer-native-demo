@@ -2,12 +2,12 @@ import { Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'tamagui';
 
-export default function Home() {
+export default function Notifications() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Home' }} />
+      <Stack.Screen options={{ title: 'Notifications' }} />
       <View style={styles.container}>
-        <Text>Home Screen</Text>
+        <Text>Notifications Screen</Text>
       </View>
     </>
   );
