@@ -1,5 +1,5 @@
 import { Toast, useToastController, useToastState } from '@tamagui/toast';
-import { YStack, View, Text, Input, Button } from 'tamagui';
+import { YStack, View, Text, Input, Button, Spinner } from 'tamagui';
 import React, { useState } from 'react';
 import { Link, Redirect, Stack } from 'expo-router';
 import { supabase } from '@/utils/supabase';
@@ -94,7 +94,7 @@ const SignInScreen = () => {
       </YStack>
 
       <Button onPress={signup} disabled={loading} borderRadius="$3" width="100%" maxWidth={400}>
-        {loading ? 'Creating Account...' : 'Create Account'}
+        {loading ? <Spinner color={'#fff'} /> : 'Create Account'}
       </Button>
 
       <Link href="/sign-in">Sign in</Link>

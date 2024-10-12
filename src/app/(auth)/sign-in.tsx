@@ -1,5 +1,5 @@
 // import { Toast, useToastController, useToastState } from '@tamagui/toast';
-import { YStack, View, Text, Button } from 'tamagui';
+import { YStack, Spinner, Text, Button } from 'tamagui';
 import React, { useState } from 'react';
 import { Link, Redirect, Stack } from 'expo-router';
 import { supabase } from '@/utils/supabase';
@@ -43,6 +43,7 @@ const SignInScreen = () => {
           placeholder="Jon@gmail.com"
           value={user.email}
           onChangeText={(email: string) => setUser({ ...user, email })}
+          // editable={false}
         />
       </YStack>
 
@@ -55,11 +56,12 @@ const SignInScreen = () => {
           value={user.password}
           onChangeText={(password: string) => setUser({ ...user, password })}
           secureTextEntry
+          // editable={false}
         />
       </YStack>
 
       <Button onPress={signin} disabled={loading} borderRadius="$3" width="100%" maxWidth={400}>
-        {loading ? 'Signing In...' : 'Sign In'}
+        {loading ? <Spinner color={'#fff'} /> : 'Sign In'}
       </Button>
 
       <Link href="/sign-up">Create an account</Link>
