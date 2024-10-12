@@ -44,7 +44,7 @@ const SignInScreen = () => {
     if (!validateConfirmPassword()) {
       return;
     }
-    const query = signUp(user, {
+    signUp(user, {
       onError: (error) => {
         Alert.alert(error.message);
       },

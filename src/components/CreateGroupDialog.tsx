@@ -12,9 +12,11 @@ import {
   XStack,
   YStack,
   Text,
+  Spinner,
 } from 'tamagui';
 import InputField from './InputField';
 import TextAreaField from './TextAreaField';
+import { useCreateGroup } from '@/api/groups';
 
 interface GroupData {
   name: string;
@@ -23,20 +25,38 @@ interface GroupData {
 
 interface CreateGroupDialogProps {
   trigger: ReactElement;
-  onCreateGroup: (groupData: GroupData) => void;
 }
 
-export function CreateGroupDialog({ trigger, onCreateGroup }: CreateGroupDialogProps) {
+export function CreateGroupDialog({ trigger }: CreateGroupDialogProps) {
   const [open, setOpen] = useState(false);
-  const [groupName, setGroupName] = useState('');
-  const [groupDescription, setGroupDescription] = useState('');
+  const [groupInfo, setGroupInfo] = useState({
+    name: '',
+    description: '',
+  });
+  const [validationError, setValidationError] = useState('');
+
+  const { mutate: createGroup, isPending, error: apiError } = useCreateGroup();
 
   const handleCreateGroup = () => {
-    onCreateGroup({ name: groupName, description: groupDescription });
-    setOpen(false);
-    setGroupName('');
-    setGroupDescription('');
+    if (!validateInput()) return;
+    createGroup(groupInfo, {
+      onSuccess: () => {
+        setGroupInfo({
+          name: '',
+          description: '',
+        });
+        setOpen(false);
+      },
+    });
   };
+
+  function validateInput() {
+    if (groupInfo.name === '' || groupInfo.description === '') {
+      setValidationError('Please fill in all fields');
+      return false;
+    }
+    return true;
+  }
 
   return (
     <Dialog modal open={open} onOpenChange={setOpen}>
@@ -76,21 +96,36 @@ export function CreateGroupDialog({ trigger, onCreateGroup }: CreateGroupDialogP
           exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
           gap="$4">
           <Dialog.Title theme={'light'}>Create Group</Dialog.Title>
-          <Dialog.Description theme={'light'}>
-            Add group name and description to get started
+          <Dialog.Description
+            theme={'light'}
+            style={{
+              fontSize: 15,
+              color: validationError || apiError ? 'red' : 'gray',
+            }}>
+            {validationError
+              ? validationError
+              : apiError
+                ? apiError.message
+                : 'Add group name and description to get started'}
           </Dialog.Description>
 
           <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
             <Text fontSize="$6" fontWeight="600" marginBottom="$2">
               Name
             </Text>
-            <InputField value={groupName} onChangeText={setGroupName} />
+            <InputField
+              value={groupInfo.name}
+              onChangeText={(name: string) => setGroupInfo({ ...groupInfo, name })}
+            />
           </YStack>
           <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
             <Text fontSize="$6" fontWeight="600" marginBottom="$2">
               Description
             </Text>
-            <TextAreaField value={groupDescription} onChangeText={setGroupDescription} />
+            <TextAreaField
+              value={groupInfo.description}
+              onChangeText={(description: string) => setGroupInfo({ ...groupInfo, description })}
+            />
           </YStack>
           <XStack alignSelf="flex-end" gap="$4">
             <Dialog.Close displayWhenAdapted asChild>
@@ -99,7 +134,7 @@ export function CreateGroupDialog({ trigger, onCreateGroup }: CreateGroupDialogP
               </Button>
             </Dialog.Close>
             <Button theme="active" aria-label="Create" onPress={handleCreateGroup}>
-              Create
+              {isPending ? <Spinner color={'#fff'} /> : 'Create'}
             </Button>
           </XStack>
           <Unspaced>

@@ -2,12 +2,17 @@ import { useFetchGroups } from '@/api/groups';
 import { Stack } from 'expo-router';
 import { FlatList } from 'react-native';
 import { ActivityIndicator } from 'react-native';
-import { View, Text } from 'tamagui';
+import { View, Text, Spinner } from 'tamagui';
 
 export default function Groups() {
   const { data: groups, isLoading, error } = useFetchGroups();
 
-  if (isLoading) return <ActivityIndicator />;
+  if (isLoading)
+    return (
+      <View flex={1} alignItems="center" justifyContent="center">
+        <Spinner color={'#000'} />
+      </View>
+    );
   if (error) return <Text>Failed to fetch groups</Text>;
   if (!groups || groups.length < 1)
     return (

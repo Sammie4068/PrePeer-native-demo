@@ -9,10 +9,6 @@ export default function Home() {
   const { data: sessionData } = useAuth();
   const username = sessionData?.user?.username;
 
-  const handleCreateGroup = () => {
-    console.log('Group created');
-  };
-
   return (
     <Main>
       <Stack.Screen options={{ title: 'Home' }} />
@@ -28,10 +24,6 @@ export default function Home() {
           />
         </Link>
 
-        {/* <HomeCard
-          imgSrc="https://vymbuvrbafpvkzjlrjon.supabase.co/storage/v1/object/sign/avatars/group-add-people-svgrepo-com.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdmF0YXJzL2dyb3VwLWFkZC1wZW9wbGUtc3ZncmVwby1jb20ucG5nIiwiaWF0IjoxNzI4NzM1MjUxLCJleHAiOjE3NDk2NzM1MjUxfQ.W6r4vgFP4tNPFGTns8SOofhg0jaVO-871LF4EHDmzOI&t=2024-10-12T12%3A14%3A11.615Z"
-          text="Create Group"
-        /> */}
         <CreateGroupDialog
           trigger={
             <HomeCard
@@ -39,7 +31,6 @@ export default function Home() {
               text="Create Group"
             />
           }
-          onCreateGroup={handleCreateGroup}
         />
       </XStack>
     </Main>
