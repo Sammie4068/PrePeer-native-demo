@@ -1,7 +1,7 @@
 import { supabase } from '@/utils/supabase';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export const useAuth = () => {
+export function useAuth() {
   const queryClient = useQueryClient();
 
   const fetchSession = async () => {
@@ -9,20 +9,20 @@ export const useAuth = () => {
       data: { session },
     } = await supabase.auth.getSession();
 
-    // if (session) {
-    //   const { data } = await supabase
-    //     .from('profiles')
-    //     .select('*')
-    //     .eq('id', session.user.id)
-    //     .single();
+    if (session) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
 
-    //   return {
-    //     session,
-    //     user: data,
-    //   };
-    // }
+      return {
+        session,
+        user: data,
+      };
+    }
 
-    return { session };
+    return { session: null, user: null };
   };
 
   const query = useQuery({
@@ -36,4 +36,30 @@ export const useAuth = () => {
   });
 
   return query;
-};
+}
+
+export function useSignUp() {
+  return useMutation({
+    async mutationFn(userInfo: any) {
+      const { username, email, password } = userInfo;
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw new Error(error.message);
+      if (data?.user) {
+        const { id: user_id } = data.user;
+        const { data: userData, error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            username,
+          })
+          .eq('id', user_id)
+          .select()
+          .single();
+        if (profileError) throw new Error(profileError.message);
+        return { userData };
+      }
+    },
+  });
+}

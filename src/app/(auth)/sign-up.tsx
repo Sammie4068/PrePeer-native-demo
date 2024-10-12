@@ -3,18 +3,20 @@ import { YStack, View, Text, Input, Button, Spinner } from 'tamagui';
 import React, { useState } from 'react';
 import { Link, Redirect, Stack } from 'expo-router';
 import { supabase } from '@/utils/supabase';
-import { useAuth } from '@/api/auth';
+import { useAuth, useSignUp } from '@/api/auth';
 import InputField from '@/components/InputField';
 import { Alert } from 'react-native';
 
 const SignInScreen = () => {
   const { data: sessionData } = useAuth();
   const [user, setUser] = useState({
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const { mutate: signUp, isPending } = useSignUp();
 
   if (sessionData?.session) {
     return <Redirect href={'/'} />;
@@ -42,22 +44,28 @@ const SignInScreen = () => {
     if (!validateConfirmPassword()) {
       return;
     }
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email: user.email,
-      password: user.password,
+    const query = signUp(user, {
+      onError: (error) => {
+        Alert.alert(error.message);
+      },
     });
-    if (error) {
-      Alert.alert(error.message);
-    }
-    setUser({ email: '', password: '', confirmPassword: '' });
-    setLoading(false);
+    setUser({ username: ' ', email: '', password: '', confirmPassword: '' });
   }
 
   return (
     <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" gap="$4">
       <Stack.Screen options={{ title: 'Sign Up' }} />
 
+      <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
+        <Text fontSize="$6" fontWeight="600" marginBottom="$2">
+          User Name
+        </Text>
+        <InputField
+          placeholder="Jon"
+          value={user.username}
+          onChangeText={(username: string) => setUser({ ...user, username })}
+        />
+      </YStack>
       <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
         <Text fontSize="$6" fontWeight="600" marginBottom="$2">
           Email
@@ -93,8 +101,8 @@ const SignInScreen = () => {
         />
       </YStack>
 
-      <Button onPress={signup} disabled={loading} borderRadius="$3" width="100%" maxWidth={400}>
-        {loading ? <Spinner color={'#fff'} /> : 'Create Account'}
+      <Button onPress={signup} disabled={isPending} borderRadius="$3" width="100%" maxWidth={400}>
+        {isPending ? <Spinner color={'#fff'} /> : 'Create Account'}
       </Button>
 
       <Link href="/sign-in">Sign in</Link>
