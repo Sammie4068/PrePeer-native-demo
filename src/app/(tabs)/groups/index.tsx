@@ -1,7 +1,6 @@
 import { useFetchGroups } from '@/api/groups';
 import { Stack } from 'expo-router';
 import { FlatList } from 'react-native';
-import { ActivityIndicator } from 'react-native';
 import { View, Text, Spinner } from 'tamagui';
 
 export default function Groups() {

@@ -10,6 +10,7 @@ export default function TabLayout() {
   if (!sessionData?.session) {
     return <Redirect href={'/'} />;
   }
+
   return (
     <Tabs
       screenOptions={{
@@ -20,8 +21,9 @@ export default function TabLayout() {
           </Link>
         ),
       }}>
+      <Tabs.Screen name="index" options={{ href: null }} />
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
