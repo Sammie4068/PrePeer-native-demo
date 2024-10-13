@@ -1,27 +1,9 @@
 import React, { ReactElement, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import {
-  Adapt,
-  Button,
-  Dialog,
-  Fieldset,
-  Input,
-  Label,
-  Sheet,
-  Unspaced,
-  XStack,
-  YStack,
-  Text,
-  Spinner,
-} from 'tamagui';
+import { Adapt, Button, Dialog, Sheet, Unspaced, XStack, YStack, Text, Spinner } from 'tamagui';
 import InputField from './InputField';
 import TextAreaField from './TextAreaField';
 import { useCreateGroup } from '@/api/groups';
-
-interface GroupData {
-  name: string;
-  description: string;
-}
 
 interface CreateGroupDialogProps {
   trigger: ReactElement;

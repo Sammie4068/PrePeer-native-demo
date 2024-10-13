@@ -1,7 +1,8 @@
 import { supabase } from '@/utils/supabase';
-import { useMutation, UseMutationResult, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './auth';
-import { InsertTables, Tables } from '@/utils/types';
+import { InsertTables } from '@/utils/types';
+import { Redirect, useRouter } from 'expo-router';
 
 export function useFetchGroups() {
   return useQuery({
@@ -28,13 +29,13 @@ export function useFetchGroupById(id: string) {
 }
 
 export function useCreateGroup() {
+  const router = useRouter();
   const queryClient = useQueryClient();
-
   const { data: sessionData } = useAuth();
   const id = sessionData?.session?.user.id;
 
   return useMutation({
-    async mutationFn(groupInfo: InsertTables<'groups'>) {
+    mutationFn: async (groupInfo: InsertTables<'groups'>) => {
       const { name, description } = groupInfo;
       const { data: createdGroup, error } = await supabase
         .from('groups')
@@ -43,15 +44,22 @@ export function useCreateGroup() {
           description,
           admin_id: id,
         })
+        .select()
         .single();
 
       if (error) {
         throw new Error(error.message);
       }
+
       return createdGroup;
     },
-    async onSuccess() {
-      await queryClient.invalidateQueries({ queryKey: ['groups'] });
+    onSuccess: (createdGroup) => {
+      queryClient.invalidateQueries({ queryKey: ['groups'] });
+      if (createdGroup && createdGroup.id) {
+        router.push(`/(tabs)/groups/${createdGroup.id}`);
+      } else {
+        throw new Error('Created group or group ID is undefined');
+      }
     },
   });
 }
