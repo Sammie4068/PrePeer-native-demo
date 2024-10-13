@@ -38,6 +38,34 @@ export function useAuth() {
   return query;
 }
 
+export function useFetchUserById(id: string | undefined) {
+  return useQuery({
+    queryKey: ['user', id],
+    queryFn: async () => {
+      if (!id) return null;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select(
+          `
+          *,
+          auth.users!inner(email)
+        `
+        )
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    enabled: !!id,
+  });
+}
+
 export function useSignUp() {
   return useMutation({
     async mutationFn(userInfo: any) {
