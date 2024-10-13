@@ -6,19 +6,18 @@ import ScreenSpinner from '@/components/ScreenSpinner';
 
 export default function groupScreen() {
   const { id: idStr } = useLocalSearchParams();
-  const id = idStr === 'string' ? idStr : idStr[0];
-
-  const { data: groupData, isLoading, error } = useFetchGroupById(id);
-  if (isLoading) return <ScreenSpinner />;
-  if (error) return <Text m="auto">Failed to fetch groups</Text>;
+  const id = typeof idStr === 'string' ? idStr : idStr[0];
 
   if (!id) return;
+  const { data: groupData, isLoading, error } = useFetchGroupById(id);
+  if (isLoading) return <ScreenSpinner />;
+  if (error) return <Text m="auto">{error.message}</Text>;
 
   return (
     <Container>
-      <Stack.Screen options={{ title: id }} />
+      <Stack.Screen options={{ headerShown: false }} />
       <View>
-        <Text>{id}</Text>
+        <Text>{groupData?.name}</Text>
       </View>
     </Container>
   );

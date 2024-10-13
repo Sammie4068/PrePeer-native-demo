@@ -9,26 +9,62 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      groupmembers: {
+        Row: {
+          group_id: string
+          is_admin: boolean | null
+          joined_at: string | null
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          is_admin?: boolean | null
+          joined_at?: string | null
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          is_admin?: boolean | null
+          joined_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "groupmembers_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "groupmembers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       groups: {
         Row: {
-          admin_id: string | null
+          admin_id: string
           created_at: string
           description: string
-          id: number
+          id: string
           name: string
         }
         Insert: {
-          admin_id?: string | null
+          admin_id: string
           created_at?: string
           description: string
-          id?: number
+          id?: string
           name: string
         }
         Update: {
-          admin_id?: string | null
+          admin_id?: string
           created_at?: string
           description?: string
-          id?: number
+          id?: string
           name?: string
         }
         Relationships: [

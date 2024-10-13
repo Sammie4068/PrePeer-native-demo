@@ -42,13 +42,25 @@ export function useCreateGroup() {
         .insert({
           name,
           description,
-          admin_id: id,
+          admin_id: id ?? '',
         })
         .select()
         .single();
 
       if (error) {
         throw new Error(error.message);
+      }
+
+      if (createdGroup) {
+        const { error } = await supabase.from('groupmembers').insert({
+          user_id: id ?? '',
+          group_id: createdGroup.id,
+          joined_at: createdGroup.created_at,
+          is_admin: true,
+        });
+        if (error) {
+          throw new Error(error.message);
+        }
       }
 
       return createdGroup;

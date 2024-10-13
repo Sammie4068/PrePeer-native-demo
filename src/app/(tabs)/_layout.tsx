@@ -16,7 +16,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: 'black',
         headerRight: () => (
-          <Link href="/settings" asChild>
+          <Link href="/settings">
             <HeaderButton />
           </Link>
         ),
