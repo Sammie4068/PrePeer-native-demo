@@ -7,13 +7,13 @@ import { CreateGroupDialog } from '@/components/CreateGroupDialog';
 
 export default function Home() {
   const { data: sessionData } = useAuth();
-  const username = sessionData?.user?.username;
+  const fullname = sessionData?.user?.full_name;
 
   return (
     <Main>
       <Stack.Screen options={{ title: 'Home' }} />
       <XStack m={30} alignItems="center" gap={5}>
-        <Text fontSize={20} fontWeight={'700'}>{`Welcome ${username}`}</Text>
+        <Text fontSize={20} fontWeight={'700'}>{`Welcome ${fullname}`}</Text>
       </XStack>
 
       <XStack alignItems="center" justifyContent="space-around" mt={20}>

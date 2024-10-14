@@ -6,13 +6,14 @@ import ScreenSpinner from '@/components/ScreenSpinner';
 import { useState } from 'react';
 import { Pressable } from 'react-native';
 import { useFetchUserById } from '@/api/auth';
+import { HorizontalTabs } from '@/components/groupTabs';
 
 export default function groupScreen() {
   const { id: idStr } = useLocalSearchParams();
   const id = typeof idStr === 'string' ? idStr : idStr[0];
   const [showFullDescription, setShowFullDescription] = useState(false);
   const { data: groupData, isLoading, error } = useFetchGroupById(id);
-  const { data: adminData } = useFetchUserById(groupData?.admin_id);
+  const { data: adminData } = useFetchUserById(groupData?.created_by);
   console.log('🚀 ~ groupScreen ~ adminData:', adminData);
 
   // const toggleDescription = () => setShowFullDescription(!showFullDescription);
@@ -41,7 +42,7 @@ export default function groupScreen() {
           </Pressable> */}
         </Text>
 
-        <View justifyContent="center" gap={5}>
+        <View justifyContent="center" gap={5} alignItems="baseline" marginBottom={20}>
           <Text fontWeight={'500'}>Create By</Text>
           <Avatar circular size="$5">
             <Avatar.Image
@@ -50,14 +51,16 @@ export default function groupScreen() {
             />
             <Avatar.Fallback backgroundColor="#000" />
           </Avatar>
-
-          {/* <Text fontSize={10} fontWeight={'600'} marginLeft={5}>
-            {adminData?.username}
-          </Text>
-          <Text fontSize={8} color={'grey'}>
-            {adminData?.email}
-          </Text> */}
+          <View justifyContent="center" alignItems="center">
+            <Text fontSize={10} fontWeight={'600'} textAlign="center">
+              {adminData?.full_name}
+            </Text>
+            <Text fontSize={8} color={'grey'} textAlign="center">
+              {adminData?.email}
+            </Text>
+          </View>
         </View>
+        <HorizontalTabs />
       </View>
     </Container>
   );

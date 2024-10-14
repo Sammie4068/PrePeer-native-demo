@@ -47,30 +47,30 @@ export type Database = {
       }
       groups: {
         Row: {
-          admin_id: string
           created_at: string
+          created_by: string
           description: string
           id: string
           name: string
         }
         Insert: {
-          admin_id: string
           created_at?: string
+          created_by: string
           description: string
           id?: string
           name: string
         }
         Update: {
-          admin_id?: string
           created_at?: string
+          created_by?: string
           description?: string
           id?: string
           name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "groups_admin_id_fkey"
-            columns: ["admin_id"]
+            foreignKeyName: "groups_created_by_fkey"
+            columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -80,6 +80,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          email: string | null
           full_name: string | null
           id: string
           updated_at: string | null
@@ -88,6 +89,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
           updated_at?: string | null
@@ -96,6 +98,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
           updated_at?: string | null

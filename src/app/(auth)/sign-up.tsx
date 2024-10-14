@@ -10,7 +10,7 @@ import { Alert } from 'react-native';
 const SignInScreen = () => {
   const { data: sessionData } = useAuth();
   const [user, setUser] = useState({
-    username: '',
+    fullname: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -49,7 +49,7 @@ const SignInScreen = () => {
         Alert.alert(error.message);
       },
     });
-    setUser({ username: ' ', email: '', password: '', confirmPassword: '' });
+    setUser({ fullname: '', email: '', password: '', confirmPassword: '' });
   }
 
   return (
@@ -58,12 +58,12 @@ const SignInScreen = () => {
 
       <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
         <Text fontSize="$6" fontWeight="600" marginBottom="$2">
-          User Name
+          Full Name
         </Text>
         <InputField
           placeholder="Jon"
-          value={user.username}
-          onChangeText={(username: string) => setUser({ ...user, username })}
+          value={user.fullname}
+          onChangeText={(fullname: string) => setUser({ ...user, fullname })}
         />
       </YStack>
       <YStack width="100%" maxWidth={400} paddingHorizontal="$2">

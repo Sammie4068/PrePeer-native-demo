@@ -44,16 +44,7 @@ export function useFetchUserById(id: string | undefined) {
     queryFn: async () => {
       if (!id) return null;
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(
-          `
-          *,
-          auth.users!inner(email)
-        `
-        )
-        .eq('id', id)
-        .single();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
 
       if (error) {
         console.error('Supabase error:', error);
@@ -69,18 +60,22 @@ export function useFetchUserById(id: string | undefined) {
 export function useSignUp() {
   return useMutation({
     async mutationFn(userInfo: any) {
-      const { username, email, password } = userInfo;
+      const { fullname, email, password } = userInfo;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
-      if (error) throw new Error(error.message);
+
+      if (error) {
+        throw new Error(error.message);
+      }
       if (data?.user) {
         const { id: user_id } = data.user;
         const { data: userData, error: profileError } = await supabase
           .from('profiles')
           .update({
-            username,
+            full_name: fullname,
+            email,
           })
           .eq('id', user_id)
           .select()

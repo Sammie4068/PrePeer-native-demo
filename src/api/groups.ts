@@ -42,7 +42,7 @@ export function useCreateGroup() {
         .insert({
           name,
           description,
-          admin_id: id ?? '',
+          created_by: id ?? '',
         })
         .select()
         .single();
