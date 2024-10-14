@@ -47,7 +47,6 @@ export function useFetchUserById(id: string | undefined) {
       const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
 
       if (error) {
-        console.error('Supabase error:', error);
         throw new Error(error.message);
       }
 
