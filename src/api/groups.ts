@@ -2,14 +2,44 @@ import { supabase } from '@/utils/supabase';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './auth';
 import { InsertTables } from '@/utils/types';
-import { Redirect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export function useFetchGroups() {
   return useQuery({
     queryKey: ['groups'],
     queryFn: async () => {
       const { data: groups, error } = await supabase.from('groups').select('*');
+
       if (error) throw new Error(error.message);
+
+      if (groups) {
+        const { data: members, error: membersError } = await supabase
+          .from('groupmembers')
+          .select('group_id, user_id, is_admin');
+
+        if (membersError) throw new Error(membersError.message);
+
+        const groupsWithMemberInfo = groups.map((group) => {
+          const groupMembers = members.filter((member) => member.group_id === group.id);
+
+          const memberIds = groupMembers
+            .filter((member) => !member.is_admin)
+            .map((member) => member.user_id);
+
+          const adminIds = groupMembers
+            .filter((member) => member.is_admin)
+            .map((member) => member.user_id);
+
+          return {
+            ...group,
+            memberIds,
+            adminIds,
+            totalUsers: groupMembers.length,
+          };
+        });
+
+        return groupsWithMemberInfo;
+      }
 
       return groups;
     },
@@ -72,6 +102,17 @@ export function useCreateGroup() {
       } else {
         throw new Error('Created group or group ID is undefined');
       }
+    },
+  });
+}
+
+export function useFetchGroupMembers(id: string) {
+  return useQuery({
+    queryKey: ['groupmembers', id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('groupmembers').select('*').eq('group_id', id);
+      if (error) throw new Error(error.message);
+      return data;
     },
   });
 }

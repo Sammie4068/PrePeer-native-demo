@@ -1,11 +1,26 @@
 import { useFetchGroups } from '@/api/groups';
 import ScreenSpinner from '@/components/ScreenSpinner';
-import { Link, Stack } from 'expo-router';
-import { FlatList } from 'react-native';
-import { View, Text, Spinner, YGroup, Separator, ListItem } from 'tamagui';
+import { Stack, useRouter } from 'expo-router';
+import { Alert, FlatList } from 'react-native';
+import { View, Text, YGroup, Separator, ListItem } from 'tamagui';
+import { useAuth } from '@/api/auth';
+import Badge from '@/components/Badge';
 
 export default function Groups() {
+  const router = useRouter();
+
+  const { data: sessionData } = useAuth();
   const { data: groups, isLoading, error } = useFetchGroups();
+
+  const userId = sessionData?.user?.id;
+
+  function checkUser(group: any) {
+    if (group.memberIds.includes(userId) || group.adminIds.includes(userId)) {
+      router.push(`/(tabs)/groups/${group.id}`);
+    } else {
+      Alert.alert('You are not a member of this group');
+    }
+  }
 
   if (isLoading) return <ScreenSpinner />;
   if (error) return <Text m="auto">Failed to fetch groups</Text>;
@@ -24,9 +39,14 @@ export default function Groups() {
           data={groups}
           renderItem={({ item }) => (
             <YGroup.Item>
-              <Link href={`/(tabs)/groups/${item.id}`} asChild>
-                <ListItem hoverTheme pressTheme title={item.name} subTitle={item.description} />
-              </Link>
+              <ListItem
+                hoverTheme
+                pressTheme
+                title={item.name}
+                subTitle={item.description}
+                iconAfter={<Badge total={item.totalUsers} />}
+                onPress={() => checkUser(item)}
+              />
             </YGroup.Item>
           )}
           contentContainerStyle={{ padding: 10, gap: 10 }}
