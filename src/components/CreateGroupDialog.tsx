@@ -4,16 +4,27 @@ import { Adapt, Button, Dialog, Sheet, Unspaced, XStack, YStack, Text, Spinner }
 import InputField from './InputField';
 import TextAreaField from './TextAreaField';
 import { useCreateGroup } from '@/api/groups';
+import { useAuth } from '@/api/auth';
 
 interface CreateGroupDialogProps {
   trigger: ReactElement;
 }
 
+interface GroupInfoProps {
+  name: string;
+  description: string;
+  created_by: string;
+}
+
 export function CreateGroupDialog({ trigger }: CreateGroupDialogProps) {
+  const { data: sessionData } = useAuth();
+  const user_id = sessionData?.session?.user.id;
+
   const [open, setOpen] = useState(false);
-  const [groupInfo, setGroupInfo] = useState({
+  const [groupInfo, setGroupInfo] = useState<GroupInfoProps>({
     name: '',
     description: '',
+    created_by: user_id ?? '',
   });
   const [validationError, setValidationError] = useState('');
 
@@ -26,6 +37,7 @@ export function CreateGroupDialog({ trigger }: CreateGroupDialogProps) {
         setGroupInfo({
           name: '',
           description: '',
+          created_by: '',
         });
         setOpen(false);
       },

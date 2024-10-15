@@ -50,10 +50,36 @@ export function useFetchGroupById(id: string) {
   return useQuery({
     queryKey: ['group', id],
     queryFn: async () => {
-      const { data, error } = await supabase.from('groups').select('*').eq('id', id).single();
+      const { data: groupData, error } = await supabase
+        .from('groups')
+        .select('*')
+        .eq('id', id)
+        .single();
       if (error) throw new Error(error.message);
 
-      return data;
+      if (groupData) {
+        const { data: members, error: membersError } = await supabase
+          .from('groupmembers')
+          .select('*')
+          .eq('group_id', id);
+
+        if (membersError) throw new Error(membersError.message);
+        const memberIds = members
+          .filter((member) => !member.is_admin)
+          .map((member) => member.user_id);
+
+        const adminIds = members
+          .filter((member) => member.is_admin)
+          .map((member) => member.user_id);
+        return {
+          ...groupData,
+          memberIds,
+          adminIds,
+          totalUsers: members.length,
+        };
+      }
+
+      return groupData;
     },
   });
 }
@@ -61,18 +87,16 @@ export function useFetchGroupById(id: string) {
 export function useCreateGroup() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: sessionData } = useAuth();
-  const id = sessionData?.session?.user.id;
 
   return useMutation({
     mutationFn: async (groupInfo: InsertTables<'groups'>) => {
-      const { name, description } = groupInfo;
+      const { name, description, created_by } = groupInfo;
       const { data: createdGroup, error } = await supabase
         .from('groups')
         .insert({
           name,
           description,
-          created_by: id ?? '',
+          created_by: created_by,
         })
         .select()
         .single();
@@ -83,7 +107,7 @@ export function useCreateGroup() {
 
       if (createdGroup) {
         const { error } = await supabase.from('groupmembers').insert({
-          user_id: id ?? '',
+          user_id: created_by,
           group_id: createdGroup.id,
           joined_at: createdGroup.created_at,
           is_admin: true,
