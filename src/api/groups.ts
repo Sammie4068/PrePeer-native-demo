@@ -140,3 +140,20 @@ export function useFetchGroupMembers(id: string) {
     },
   });
 }
+
+export function useJoinGroup() {
+  return useMutation({
+    mutationFn: async ({ group_id, user_id }: InsertTables<'groupmembers'>) => {
+      const { data, error } = await supabase
+        .from('groupmembers')
+        .insert({
+          user_id,
+          group_id,
+          is_admin: false,
+        })
+        .select();
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  });
+}

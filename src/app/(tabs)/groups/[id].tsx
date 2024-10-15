@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { Container, Subtitle, Main } from 'tamagui.config';
+import { Main } from 'tamagui.config';
 import {
   View,
   Text,
@@ -11,11 +11,9 @@ import {
   Tabs,
   TabsContentProps,
   H5,
-  AlertDialog,
-  XStack,
-  YStack,
+  Spinner,
 } from 'tamagui';
-import { useFetchGroupById, useFetchGroupMembers } from '@/api/groups';
+import { useFetchGroupById, useJoinGroup } from '@/api/groups';
 import ScreenSpinner from '@/components/ScreenSpinner';
 import { useEffect, useState } from 'react';
 import { Alert, Pressable } from 'react-native';
@@ -43,13 +41,14 @@ const TabsContent = (props: TabsContentProps) => {
 
 export default function groupScreen() {
   const { id: idStr } = useLocalSearchParams();
-  const id = typeof idStr === 'string' ? idStr : idStr[0];
-  const { data: groupData, isLoading, error } = useFetchGroupById(id);
+  const groupId = typeof idStr === 'string' ? idStr : idStr[0];
+  const { data: groupData, isLoading, error } = useFetchGroupById(groupId);
   const { data: adminData } = useFetchUserById(groupData?.created_by);
   const { data: sessionData } = useAuth();
   const [isMember, setIsMember] = useState(true);
+  const { mutate: joinGroup, isPending, error: joinGroupError } = useJoinGroup();
 
-  if (!id) return;
+  if (!groupId) return;
   if (isLoading) return <ScreenSpinner />;
   if (error) return <Text m="auto">{error.message}</Text>;
 
@@ -59,8 +58,33 @@ export default function groupScreen() {
     if (groupData?.memberIds.includes(userId ?? '') || groupData?.adminIds.includes(userId ?? '')) {
       setIsMember(false);
     }
-  }, [groupData?.memberIds]);
+  }, [isMember]);
 
+  const handleJoinGroup = () => {
+    joinGroup(
+      { group_id: groupId, user_id: userId ?? '' },
+      {
+        onSuccess: () => {
+          setIsMember(false);
+        },
+      }
+    );
+  };
+
+  if (joinGroupError) {
+    console.log(joinGroupError.message);
+
+    return (
+      <View m="auto" gap="$2">
+        <Text color="red" fontSize={15}>
+          Something went wrong, please try again..
+        </Text>
+        <Button width={'50%'} margin={'auto'} textAlign="center" onPress={handleJoinGroup}>
+          {isPending ? <Spinner color={'white'} /> : 'Join Group'}
+        </Button>
+      </View>
+    );
+  }
   return (
     <Main marginVertical={isMember ? 0 : 'auto'}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -143,8 +167,8 @@ export default function groupScreen() {
             </TabsContent>
           </Tabs>
         ) : (
-          <Button width={'50%'} margin={'auto'}>
-            Join Group
+          <Button width={'50%'} margin={'auto'} onPress={handleJoinGroup}>
+            {isPending ? <Spinner color={'white'} /> : 'Join Group'}
           </Button>
         )}
       </View>
