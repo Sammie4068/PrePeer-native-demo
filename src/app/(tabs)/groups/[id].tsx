@@ -55,10 +55,36 @@ export default function groupScreen() {
   const userId = sessionData?.user?.id;
 
   useEffect(() => {
-    if (groupData?.memberIds.includes(userId ?? '') || groupData?.adminIds.includes(userId ?? '')) {
-      setIsMember(false);
-    }
-  }, [isMember]);
+    const checkMembership = () => {
+      if (!groupData || !userId) return;
+
+      const isUserMember =
+        groupData.memberIds.includes(userId) || groupData.adminIds.includes(userId);
+      setIsMember(isUserMember);
+    };
+
+    checkMembership();
+  }, [groupData, userId]);
+
+  const handleLeaveGroup = () => {
+    Alert.alert(
+      'Leave Group',
+      'Are you sure you want to leave this group?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            // Perform leave group action
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   const handleJoinGroup = () => {
     joinGroup(
