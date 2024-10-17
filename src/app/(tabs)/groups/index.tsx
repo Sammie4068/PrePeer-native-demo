@@ -32,7 +32,6 @@ export default function Groups() {
                   title={item.name}
                   subTitle={item.description}
                   iconAfter={<Badge total={item.totalUsers} />}
-                  // onPress={() => checkUser(item)}
                 />
               </Link>
             </YGroup.Item>
