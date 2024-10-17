@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { Main } from 'tamagui.config';
-import {
-  View,
-  Text,
-  Button,
-  Avatar,
-  Spinner,
-  Tabs,
-  Separator,
-  SizableText,
-  H5,
-  TabsContentProps,
-} from 'tamagui';
+import { View, Text, Button, Avatar, Spinner } from 'tamagui';
 import { useFetchGroupById, useJoinGroup, useLeaveGroup } from '@/api/groups';
 import ScreenSpinner from '@/components/ScreenSpinner';
 import { Alert, Pressable } from 'react-native';
@@ -20,62 +9,12 @@ import { useAuth, useFetchUserById } from '@/api/auth';
 import { useGroupMembersSubscription } from '@/api/subscribers';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useQueryClient } from '@tanstack/react-query';
-
-const TabsContent = (props: TabsContentProps) => {
-  return (
-    <Tabs.Content
-      backgroundColor="white"
-      key="tab3"
-      padding="$2"
-      // alignItems="center"
-      // justifyContent="center"
-      flex={1}
-      borderColor="white"
-      borderRadius="$2"
-      borderTopLeftRadius={0}
-      borderTopRightRadius={0}
-      borderWidth="$2"
-      {...props}>
-      {props.children}
-    </Tabs.Content>
-  );
-};
-
-const GroupTabs = ({ groupData }: { groupData: any }) => (
-  <Tabs
-    defaultValue="tab1"
-    orientation="horizontal"
-    flexDirection="column"
-    width={'100%'}
-    height={600}
-    backgroundColor={'whitesmoke'}
-    overflow="hidden"
-    borderColor="$borderColor">
-    <Tabs.List
-      separator={<Separator vertical />}
-      disablePassBorderRadius="bottom"
-      aria-label="Group Tabs">
-      <Tabs.Tab flex={1} value="tab1">
-        <SizableText fontFamily="$body">Exercise</SizableText>
-      </Tabs.Tab>
-      <Tabs.Tab flex={1} value="tab2">
-        <SizableText fontFamily="$body">Members</SizableText>
-      </Tabs.Tab>
-    </Tabs.List>
-    <Separator />
-    <TabsContent value="tab1">
-      <H5 color={'black'}>Exercise</H5>
-    </TabsContent>
-    {/* {groupData} */}
-    <TabsContent value="tab2"></TabsContent>
-  </Tabs>
-);
+import GroupTabs from '@/components/GroupTabs';
 
 export default function GroupScreen() {
   const { id: idStr } = useLocalSearchParams();
   const groupId = typeof idStr === 'string' ? idStr : idStr[0];
   const { data: groupData, isLoading, error } = useFetchGroupById(groupId);
-  console.log('🚀 ~ GroupScreen ~ groupData:', groupData);
   const { data: adminData } = useFetchUserById(groupData?.created_by);
   const { data: sessionData } = useAuth();
   const [isMember, setIsMember] = useState(false);
@@ -89,9 +28,11 @@ export default function GroupScreen() {
 
   const userId = sessionData?.user?.id;
 
+  const memberIds = groupData?.members.map((mem) => mem.id);
+
   useEffect(() => {
-    if (groupData && userId) {
-      const isUserMember = groupData.memberIds.includes(userId);
+    if (memberIds && userId) {
+      const isUserMember = memberIds.includes(userId);
       setIsMember(isUserMember);
     }
   }, [groupData, userId]);

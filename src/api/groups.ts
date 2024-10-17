@@ -45,35 +45,89 @@ export function useFetchGroups() {
   });
 }
 
+// export function useFetchGroupById(id: string) {
+//   return useQuery({
+//     queryKey: ['group', id],
+//     queryFn: async () => {
+//       const { data: groupData, error } = await supabase
+//         .from('groups')
+//         .select('*')
+//         .eq('id', id)
+//         .single();
+//       if (error) throw new Error(error.message);
+
+//       if (groupData) {
+//         const { data: members, error: membersError } = await supabase
+//           .from('groupmembers')
+//           .select('*')
+//           .eq('group_id', id);
+
+//         if (membersError) throw new Error(membersError.message);
+//         const memberIds = members.map((member) => member.user_id);
+
+//         return {
+//           ...groupData,
+//           memberIds,
+//           totalUsers: members.length,
+//         };
+//       }
+
+//       return groupData;
+//     },
+//   });
+// }
+interface Member {
+  id: string;
+  full_name: string;
+  email: string;
+}
+
+interface Group {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  created_by: string;
+  members: Member[];
+  totalUsers: number;
+}
+
 export function useFetchGroupById(id: string) {
-  return useQuery({
+  return useQuery<Group, Error>({
     queryKey: ['group', id],
     queryFn: async () => {
-      const { data: groupData, error } = await supabase
+      const { data: groupData, error: groupError } = await supabase
         .from('groups')
         .select('*')
         .eq('id', id)
         .single();
-      if (error) throw new Error(error.message);
 
-      if (groupData) {
-        const { data: members, error: membersError } = await supabase
-          .from('groupmembers')
-          .select('*')
-          .eq('group_id', id);
+      if (groupError) throw new Error(groupError.message);
+      if (!groupData) throw new Error('Group not found');
 
-        if (membersError) throw new Error(membersError.message);
-        const memberIds = members.map((member) => member.user_id);
+      const { data: members, error: membersError } = await supabase
+        .from('groupmembers')
+        .select(
+          `
+          user_id,
+          profiles:user_id (*)
+        `
+        )
+        .eq('group_id', id);
 
-        return {
-          ...groupData,
-          memberIds,
+      if (membersError) throw new Error(membersError.message);
 
-          totalUsers: members.length,
-        };
-      }
+      const groupMembers: Member[] = members.map((member) => ({
+        id: member.profiles.id,
+        full_name: member.profiles.full_name,
+        email: member.profiles.email,
+      }));
 
-      return groupData;
+      return {
+        ...groupData,
+        members: groupMembers,
+        totalUsers: groupMembers.length,
+      };
     },
   });
 }
@@ -124,16 +178,33 @@ export function useCreateGroup() {
   });
 }
 
-export function useFetchGroupMembers(id: string) {
-  return useQuery({
-    queryKey: ['groupmembers', id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('groupmembers').select('*').eq('group_id', id);
-      if (error) throw new Error(error.message);
-      return data;
-    },
-  });
-}
+// export const useFetchGroupMembers = (groupId: string, creatorId: string) => {
+//   return useQuery({
+//     queryKey: ['groupMembers', groupId],
+//     queryFn: async () => {
+//       const { data: groupMembers, error } = await supabase
+//         .from('groupmembers')
+//         .select('user_id, is_admin, users(id, full_name, avatar_url, email, created_at)')
+//         .eq('group_id', groupId);
+
+//       if (error) throw new Error(error.message);
+
+//       const members = groupMembers.map((member) => ({
+//         ...member.users,
+//         is_admin: member.is_admin,
+//       }));
+
+//       // Sort members: creator first, then admins, then regular members
+//       return members.sort((a, b) => {
+//         if (a.id === creatorId) return -1;
+//         if (b.id === creatorId) return 1;
+//         if (a.is_admin && !b.is_admin) return -1;
+//         if (!a.is_admin && b.is_admin) return 1;
+//         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+//       });
+//     },
+//   });
+// };
 
 export function useJoinGroup() {
   return useMutation({
