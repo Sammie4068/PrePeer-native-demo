@@ -2,17 +2,16 @@ import { supabase } from '@/utils/supabase';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
-export const groupMembersSubscription = (id: string) => {
+export const useGroupMembersSubscription = (id: string) => {
   const queryClient = useQueryClient();
-
   useEffect(() => {
     const groupMembersSub = supabase
-      .channel('custom-insert-channel')
+      .channel('custom-all-channel')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'groupmembers' },
+        { event: '*', schema: 'public', table: 'groupmembers' },
         (payload) => {
-          queryClient.invalidateQueries({ queryKey: ['groupmembers', id] });
+          queryClient.invalidateQueries({ queryKey: ['groupMembers', id] });
         }
       )
       .subscribe();

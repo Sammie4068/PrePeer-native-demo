@@ -15,10 +15,11 @@ import {
 } from 'tamagui';
 import { useFetchGroupById, useJoinGroup, useLeaveGroup } from '@/api/groups';
 import ScreenSpinner from '@/components/ScreenSpinner';
-import { ActivityIndicator, Alert, Pressable } from 'react-native';
+import { Alert, Pressable } from 'react-native';
 import { useAuth, useFetchUserById } from '@/api/auth';
-import { groupMembersSubscription } from '@/api/subscribers';
+import { useGroupMembersSubscription } from '@/api/subscribers';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { useQueryClient } from '@tanstack/react-query';
 
 const TabsContent = (props: TabsContentProps) => {
   return (
@@ -84,7 +85,8 @@ export default function GroupScreen() {
     mutate: leaveGroup,
     isPending: leaveGroupPending,
     error: leaveGroupError,
-  } = useLeaveGroup({ group_id: groupId, user_id: sessionData?.user?.id ?? '' });
+  } = useLeaveGroup();
+  const queryClient = useQueryClient();
 
   const userId = sessionData?.user?.id;
 
@@ -96,23 +98,20 @@ export default function GroupScreen() {
     }
   }, [groupData, userId]);
 
+  useGroupMembersSubscription(groupId);
+
   const handleJoinGroup = () => {
     if (userId) {
       joinGroup(
         { group_id: groupId, user_id: userId },
         {
           onSuccess: () => {
-            setIsMember(true);
-            groupMembersSubscription(groupId);
+            setIsMember(true), queryClient.invalidateQueries({ queryKey: ['group', groupId] });
           },
         }
       );
     }
   };
-
-  if (!groupId) return null;
-  if (isLoading) return <ScreenSpinner />;
-  if (error) return <Text m="auto">{error.message}</Text>;
 
   const handleLeaveGroup = () => {
     Alert.alert(
@@ -123,8 +122,18 @@ export default function GroupScreen() {
         {
           text: 'OK',
           onPress: () => {
-            leaveGroup();
-            setIsMember(false);
+            leaveGroup(
+              {
+                group_id: groupId,
+                user_id: sessionData?.user?.id ?? '',
+              },
+              {
+                onSuccess: () => {
+                  setIsMember(false);
+                  queryClient.invalidateQueries({ queryKey: ['group', groupId] });
+                },
+              }
+            );
           },
         },
       ],
@@ -132,8 +141,10 @@ export default function GroupScreen() {
     );
   };
 
+  if (!groupId) return null;
+  if (isLoading) return <ScreenSpinner />;
+  if (error) return <Text m="auto">{error.message}</Text>;
   if (leaveGroupPending) return <ScreenSpinner />;
-
   if (leaveGroupError) return <Text m="auto">{leaveGroupError.message}</Text>;
   if (joinGroupError) return <Text m="auto">{joinGroupError.message}</Text>;
 
@@ -191,13 +202,13 @@ export default function GroupScreen() {
           {isMember && (
             <Pressable onPress={handleLeaveGroup}>
               {({ pressed }) => (
-                <Text gap={5} alignItems="center">
+                <Text gap={10} alignItems="center" color={'red'}>
                   Leave Group
                   <FontAwesome6
                     name="door-open"
-                    size={25}
+                    size={20}
                     color="red"
-                    // style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 </Text>
               )}

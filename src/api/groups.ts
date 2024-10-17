@@ -141,8 +141,6 @@ export function useFetchGroupMembers(id: string) {
 }
 
 export function useJoinGroup() {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({ group_id, user_id }: InsertTables<'groupmembers'>) => {
       const { data, error } = await supabase
@@ -156,27 +154,18 @@ export function useJoinGroup() {
       if (error) throw new Error(error.message);
       return data;
     },
-    //   onSuccess: (data) => {
-    //   queryClient.invalidateQueries({ queryKey: ['groupmembers', data.group_id] });
-
-    // },
   });
 }
 
-export function useLeaveGroup({ group_id, user_id }: InsertTables<'groupmembers'>) {
-  const queryClient = useQueryClient();
-
+export function useLeaveGroup() {
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ group_id, user_id }: InsertTables<'groupmembers'>) => {
       const { error } = await supabase
         .from('groupmembers')
         .delete()
         .eq('group_id', group_id)
         .eq('user_id', user_id);
       if (error) throw new Error(error.message);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['groupmembers', group_id] });
     },
   });
 }
