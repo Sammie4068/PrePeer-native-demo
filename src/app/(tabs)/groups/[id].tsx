@@ -13,10 +13,12 @@ import {
   H5,
   TabsContentProps,
 } from 'tamagui';
-import { useFetchGroupById, useJoinGroup } from '@/api/groups';
+import { useFetchGroupById, useJoinGroup, useLeaveGroup } from '@/api/groups';
 import ScreenSpinner from '@/components/ScreenSpinner';
-import { Alert } from 'react-native';
+import { ActivityIndicator, Alert, Pressable } from 'react-native';
 import { useAuth, useFetchUserById } from '@/api/auth';
+import { groupMembersSubscription } from '@/api/subscribers';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 const TabsContent = (props: TabsContentProps) => {
   return (
@@ -78,6 +80,11 @@ export default function GroupScreen() {
   const { data: sessionData } = useAuth();
   const [isMember, setIsMember] = useState(false);
   const { mutate: joinGroup, isPending, error: joinGroupError } = useJoinGroup();
+  const {
+    mutate: leaveGroup,
+    isPending: leaveGroupPending,
+    error: leaveGroupError,
+  } = useLeaveGroup({ group_id: groupId, user_id: sessionData?.user?.id ?? '' });
 
   const userId = sessionData?.user?.id;
 
@@ -96,6 +103,7 @@ export default function GroupScreen() {
         {
           onSuccess: () => {
             setIsMember(true);
+            groupMembersSubscription(groupId);
           },
         }
       );
@@ -115,7 +123,8 @@ export default function GroupScreen() {
         {
           text: 'OK',
           onPress: () => {
-            /* Perform leave group action */
+            leaveGroup();
+            setIsMember(false);
           },
         },
       ],
@@ -123,9 +132,18 @@ export default function GroupScreen() {
     );
   };
 
+  if (leaveGroupPending) return <ScreenSpinner />;
+
+  if (leaveGroupError) return <Text m="auto">{leaveGroupError.message}</Text>;
+  if (joinGroupError) return <Text m="auto">{joinGroupError.message}</Text>;
+
   return (
     <Main marginVertical={isMember ? 0 : 'auto'}>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
       <View>
         <View margin={20} gap={10}>
           <Text fontSize={25} fontWeight={'700'}>
@@ -170,6 +188,21 @@ export default function GroupScreen() {
               </Text>
             </View>
           </View>
+          {isMember && (
+            <Pressable onPress={handleLeaveGroup}>
+              {({ pressed }) => (
+                <Text gap={5} alignItems="center">
+                  Leave Group
+                  <FontAwesome6
+                    name="door-open"
+                    size={25}
+                    color="red"
+                    // style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                </Text>
+              )}
+            </Pressable>
+          )}
         </View>
 
         {joinGroupError ? (
