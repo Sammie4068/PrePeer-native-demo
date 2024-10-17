@@ -27,8 +27,8 @@ const TabsContent = (props: TabsContentProps) => {
       backgroundColor="white"
       key="tab3"
       padding="$2"
-      alignItems="center"
-      justifyContent="center"
+      // alignItems="center"
+      // justifyContent="center"
       flex={1}
       borderColor="white"
       borderRadius="$2"
@@ -41,7 +41,7 @@ const TabsContent = (props: TabsContentProps) => {
   );
 };
 
-const GroupTabs = () => (
+const GroupTabs = ({ groupData }: { groupData: any }) => (
   <Tabs
     defaultValue="tab1"
     orientation="horizontal"
@@ -66,10 +66,8 @@ const GroupTabs = () => (
     <TabsContent value="tab1">
       <H5 color={'black'}>Exercise</H5>
     </TabsContent>
-
-    <TabsContent value="tab2">
-      <H5 color={'black'}>Members</H5>
-    </TabsContent>
+    {/* {groupData} */}
+    <TabsContent value="tab2"></TabsContent>
   </Tabs>
 );
 
@@ -77,6 +75,7 @@ export default function GroupScreen() {
   const { id: idStr } = useLocalSearchParams();
   const groupId = typeof idStr === 'string' ? idStr : idStr[0];
   const { data: groupData, isLoading, error } = useFetchGroupById(groupId);
+  console.log('🚀 ~ GroupScreen ~ groupData:', groupData);
   const { data: adminData } = useFetchUserById(groupData?.created_by);
   const { data: sessionData } = useAuth();
   const [isMember, setIsMember] = useState(false);
@@ -92,8 +91,7 @@ export default function GroupScreen() {
 
   useEffect(() => {
     if (groupData && userId) {
-      const isUserMember =
-        groupData.memberIds.includes(userId) || groupData.adminIds.includes(userId);
+      const isUserMember = groupData.memberIds.includes(userId);
       setIsMember(isUserMember);
     }
   }, [groupData, userId]);
@@ -226,7 +224,7 @@ export default function GroupScreen() {
             </Button>
           </View>
         ) : isMember ? (
-          <GroupTabs />
+          <GroupTabs groupData={groupData} />
         ) : (
           <Button width={'50%'} margin={'auto'} onPress={handleJoinGroup}>
             {isPending ? <Spinner color={'white'} /> : 'Join Group'}

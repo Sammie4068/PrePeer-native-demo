@@ -63,17 +63,12 @@ export function useFetchGroupById(id: string) {
           .eq('group_id', id);
 
         if (membersError) throw new Error(membersError.message);
-        const memberIds = members
-          .filter((member) => !member.is_admin)
-          .map((member) => member.user_id);
+        const memberIds = members.map((member) => member.user_id);
 
-        const adminIds = members
-          .filter((member) => member.is_admin)
-          .map((member) => member.user_id);
         return {
           ...groupData,
           memberIds,
-          adminIds,
+
           totalUsers: members.length,
         };
       }
