@@ -117,10 +117,10 @@ export function useFetchGroupById(id: string) {
 
       if (membersError) throw new Error(membersError.message);
 
-      const groupMembers: Member[] = members.map((member) => ({
-        id: member.profiles.id,
-        full_name: member.profiles.full_name,
-        email: member.profiles.email,
+      const groupMembers: Member[] = members.map(({ profiles }) => ({
+        id: profiles.id,
+        full_name: profiles.full_name,
+        email: profiles.email,
       }));
 
       return {
