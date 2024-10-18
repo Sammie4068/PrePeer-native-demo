@@ -1,6 +1,7 @@
 import { Tabs, Separator, SizableText, H5, TabsContentProps, YStack } from 'tamagui';
 import { FlatList } from 'react-native';
 import UsersList from './UsersList';
+import type { Member, Group } from '@/utils/types';
 
 interface GroupDataProps {
   groupData?: {
@@ -8,6 +9,7 @@ interface GroupDataProps {
       id: string;
       full_name: string;
       email: string;
+      isAdmin: boolean | null;
     }[];
     totalUsers: number;
     created_at: string;
@@ -36,8 +38,9 @@ const TabsContent = (props: TabsContentProps) => {
   );
 };
 
-function GroupTabs(groupData: GroupDataProps) {
-  const groupMembers = groupData.groupData?.members;
+function GroupTabs({ groupData }: { groupData: Group | undefined }) {
+  console.log(JSON.stringify(groupData, null, 2));
+  const groupMembers = groupData?.members;
 
   return (
     <Tabs
@@ -69,7 +72,12 @@ function GroupTabs(groupData: GroupDataProps) {
           <FlatList
             data={groupMembers}
             renderItem={({ item }) => (
-              <UsersList img={null} name={item.full_name} email={item.email} />
+              <UsersList
+                img={null}
+                name={item.full_name}
+                email={item.email}
+                isAdmin={item.isAdmin}
+              />
             )}
             contentContainerStyle={{ padding: 10, gap: 10 }}
           />

@@ -2,6 +2,7 @@ import { supabase } from '@/utils/supabase';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { InsertTables } from '@/utils/types';
 import { useRouter } from 'expo-router';
+import type { Member, Group } from '@/utils/types';
 
 export function useFetchGroups() {
   return useQuery({
@@ -45,53 +46,6 @@ export function useFetchGroups() {
   });
 }
 
-// export function useFetchGroupById(id: string) {
-//   return useQuery({
-//     queryKey: ['group', id],
-//     queryFn: async () => {
-//       const { data: groupData, error } = await supabase
-//         .from('groups')
-//         .select('*')
-//         .eq('id', id)
-//         .single();
-//       if (error) throw new Error(error.message);
-
-//       if (groupData) {
-//         const { data: members, error: membersError } = await supabase
-//           .from('groupmembers')
-//           .select('*')
-//           .eq('group_id', id);
-
-//         if (membersError) throw new Error(membersError.message);
-//         const memberIds = members.map((member) => member.user_id);
-
-//         return {
-//           ...groupData,
-//           memberIds,
-//           totalUsers: members.length,
-//         };
-//       }
-
-//       return groupData;
-//     },
-//   });
-// }
-interface Member {
-  id: string;
-  full_name: string;
-  email: string;
-}
-
-interface Group {
-  id: string;
-  name: string;
-  description: string;
-  created_at: string;
-  created_by: string;
-  members: Member[];
-  totalUsers: number;
-}
-
 export function useFetchGroupById(id: string) {
   return useQuery<Group, Error>({
     queryKey: ['group', id],
@@ -110,6 +64,7 @@ export function useFetchGroupById(id: string) {
         .select(
           `
           user_id,
+          is_admin,
           profiles:user_id (*)
         `
         )
@@ -117,10 +72,11 @@ export function useFetchGroupById(id: string) {
 
       if (membersError) throw new Error(membersError.message);
 
-      const groupMembers: Member[] = members.map(({ profiles }) => ({
+      const groupMembers: Member[] = (members as any[]).map(({ profiles, is_admin }) => ({
         id: profiles.id,
         full_name: profiles.full_name,
         email: profiles.email,
+        isAdmin: is_admin,
       }));
 
       return {

@@ -80,12 +80,32 @@ export default function GroupScreen() {
     );
   };
 
-  if (!groupId) return null;
-  if (isLoading) return <ScreenSpinner />;
-  if (error) return <Text m="auto">{error.message}</Text>;
-  if (leaveGroupPending) return <ScreenSpinner />;
-  if (leaveGroupError) return <Text m="auto">{leaveGroupError.message}</Text>;
-  if (joinGroupError) return <Text m="auto">{joinGroupError.message}</Text>;
+  if (!groupId) return;
+  if (isLoading || leaveGroupPending) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
+        <ScreenSpinner />
+      </>
+    );
+  }
+
+  if (error || leaveGroupError || joinGroupError) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Text m="auto">Something went wrong, Try Again</Text>
+      </>
+    );
+  }
 
   return (
     <Main marginVertical={isMember ? 0 : 'auto'}>

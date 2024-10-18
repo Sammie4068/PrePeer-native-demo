@@ -8,3 +8,20 @@ export type UpdateTables<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Update'];
 
 export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
+
+export interface Member {
+  id: string;
+  full_name: string;
+  email: string;
+  isAdmin: boolean | null;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  description: string;
+  created_at: string;
+  created_by: string;
+  members: Member[];
+  totalUsers: number;
+}
