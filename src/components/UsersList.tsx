@@ -1,4 +1,5 @@
 import { Avatar, View, Text } from 'tamagui';
+import type { Member } from '@/utils/types';
 
 export default function UsersList({
   img,

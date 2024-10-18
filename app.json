@@ -7,7 +7,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./src/assets/P.png"
+      "favicon": "./src/assets/prepeer.png"
     },
     "plugins": ["expo-router", "expo-secure-store"],
     "experiments": {
@@ -15,10 +15,10 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./src/assets/P.png",
+    "icon": "./src/assets/prepeer.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/P.png",
+      "image": "./src/assets/prepeer.png",
       "resizeMode": "native",
       "backgroundColor": "#ffffff",
       "width": 50,

@@ -1,24 +1,9 @@
 import { Tabs, Separator, SizableText, H5, TabsContentProps, YStack } from 'tamagui';
 import { FlatList } from 'react-native';
 import UsersList from './UsersList';
-import type { Member, Group } from '@/utils/types';
-
-interface GroupDataProps {
-  groupData?: {
-    members: {
-      id: string;
-      full_name: string;
-      email: string;
-      isAdmin: boolean | null;
-    }[];
-    totalUsers: number;
-    created_at: string;
-    created_by: string;
-    description: string;
-    id: string;
-    name: string;
-  };
-}
+import type { Group } from '@/utils/types';
+import ExercisesList from './ExercisesList';
+import TabSearchBar from './TabSearchBar';
 
 const TabsContent = (props: TabsContentProps) => {
   return (
@@ -39,7 +24,6 @@ const TabsContent = (props: TabsContentProps) => {
 };
 
 function GroupTabs({ groupData }: { groupData: Group | undefined }) {
-  console.log(JSON.stringify(groupData, null, 2));
   const groupMembers = groupData?.members;
 
   return (
@@ -57,7 +41,7 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
         disablePassBorderRadius="bottom"
         aria-label="Group Tabs">
         <Tabs.Tab flex={1} value="tab1">
-          <SizableText fontFamily="$body">Exercise</SizableText>
+          <SizableText fontFamily="$body">Exercises</SizableText>
         </Tabs.Tab>
         <Tabs.Tab flex={1} value="tab2">
           <SizableText fontFamily="$body">Members</SizableText>
@@ -65,7 +49,16 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
       </Tabs.List>
       <Separator />
       <TabsContent value="tab1">
-        <H5 color={'black'}>Exercise</H5>
+        <YStack gap={10}>
+          <TabSearchBar placeholder="Search exercises..." buttonText="Add Exercises" />
+          <ExercisesList />
+          <ExercisesList />
+          <ExercisesList />
+          <ExercisesList />
+          <ExercisesList />
+          <ExercisesList />
+          <ExercisesList />
+        </YStack>
       </TabsContent>
       <TabsContent value="tab2">
         <YStack>
