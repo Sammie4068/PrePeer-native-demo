@@ -5,6 +5,7 @@ import type { Group } from '@/utils/types';
 import ExercisesList from './ExercisesList';
 import TabSearchBar from './TabSearchBar';
 import { Text } from 'tamagui';
+import { useExerciseSubscription } from '@/api/subscribers';
 
 const TabsContent = (props: TabsContentProps) => {
   return (
@@ -28,6 +29,8 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
   const groupMembers = groupData?.members;
   const groupExercises = groupData?.exercises;
   // console.log(JSON.stringify(groupData, null, 2));
+
+  useExerciseSubscription(groupData?.id);
 
   return (
     <Tabs
@@ -53,7 +56,11 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
       <Separator />
       <TabsContent value="tab1">
         <YStack gap={10} flex={1}>
-          <TabSearchBar placeholder="Search exercises..." buttonText="Add Exercises" />
+          <TabSearchBar
+            placeholder="Search exercises..."
+            buttonText="Add Exercises"
+            groupId={groupData?.id}
+          />
           {groupExercises?.length !== 0 ? (
             <FlatList
               data={groupExercises}

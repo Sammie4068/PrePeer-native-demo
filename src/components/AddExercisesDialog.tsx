@@ -3,54 +3,60 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Adapt, Button, Dialog, Sheet, Unspaced, XStack, YStack, Text, Spinner } from 'tamagui';
 import InputField from './InputField';
 import TextAreaField from './TextAreaField';
-import { useCreateGroup } from '@/api/groups';
 import { useAuth } from '@/api/auth';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Pressable } from 'react-native';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { useAddExercise } from '@/api/exercises';
+
+dayjs.extend(relativeTime);
 
 interface CreateGroupDialogProps {
   trigger: ReactElement;
+  groupId: string;
 }
 
-interface GroupInfoProps {
-  name: string;
-  description: string;
-  created_by: string;
-}
-
-export function CreateGroupDialog({ trigger }: CreateGroupDialogProps) {
+export function AddExercisesDialog({ trigger, groupId }: CreateGroupDialogProps) {
   const { data: sessionData } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+
   const user_id = sessionData?.session?.user.id;
 
-  const [open, setOpen] = useState(false);
-  const [groupInfo, setGroupInfo] = useState<GroupInfoProps>({
-    name: '',
-    description: '',
-    created_by: user_id ?? '',
-  });
-  const [validationError, setValidationError] = useState('');
-
-  const { mutate: createGroup, isPending, error: apiError } = useCreateGroup();
-
-  const handleCreateGroup = () => {
-    if (!validateInput()) return;
-    createGroup(groupInfo, {
-      onSuccess: () => {
-        setGroupInfo({
-          name: '',
-          description: '',
-          created_by: '',
-        });
-        setOpen(false);
-      },
-    });
+  const onChange = (event: any, selectedDate: any) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setDate(currentDate);
   };
 
-  function validateInput() {
-    if (groupInfo.name === '' || groupInfo.description === '') {
-      setValidationError('Please fill in all fields');
-      return false;
-    }
-    return true;
-  }
+  const showMode = (currentMode: any) => {
+    setShow(true);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const { mutate: addExercise, isPending, error: addError } = useAddExercise();
+
+  const handleAddExercise = () => {
+    addExercise(
+      {
+        title,
+        date: date.toISOString(),
+        created_by: user_id,
+        group_id: groupId,
+      },
+      {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      }
+    );
+  };
 
   return (
     <Dialog modal open={open} onOpenChange={setOpen}>
@@ -89,37 +95,36 @@ export function CreateGroupDialog({ trigger }: CreateGroupDialogProps) {
           enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
           exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
           gap="$4">
-          <Dialog.Title theme={'light'}>Create Group</Dialog.Title>
+          <Dialog.Title theme={'light'}>Add Exercise</Dialog.Title>
           <Dialog.Description
             theme={'light'}
             style={{
               fontSize: 15,
-              color: validationError || apiError ? 'red' : 'gray',
-            }}>
-            {validationError
-              ? validationError
-              : apiError
-                ? apiError.message
-                : 'Add group name and description to get started'}
-          </Dialog.Description>
+              color: 'red',
+            }}></Dialog.Description>
 
           <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
             <Text fontSize="$6" fontWeight="600" marginBottom="$2">
-              Name
+              Title
             </Text>
-            <InputField
-              value={groupInfo.name}
-              onChangeText={(name: string) => setGroupInfo({ ...groupInfo, name })}
-            />
+            <InputField value={title} onChangeText={(title: string) => setTitle(title)} />
           </YStack>
           <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
             <Text fontSize="$6" fontWeight="600" marginBottom="$2">
-              Description
+              Exercise Date (Optional)
             </Text>
-            <TextAreaField
-              value={groupInfo.description}
-              onChangeText={(description: string) => setGroupInfo({ ...groupInfo, description })}
-            />
+            <Pressable onPress={showDatepicker}>
+              <InputField value={date.toDateString()} disabled />
+            </Pressable>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={'date'}
+                is24Hour={true}
+                onChange={onChange}
+              />
+            )}
           </YStack>
           <XStack alignSelf="flex-end" gap="$4">
             <Dialog.Close displayWhenAdapted asChild>
@@ -127,8 +132,8 @@ export function CreateGroupDialog({ trigger }: CreateGroupDialogProps) {
                 Cancel
               </Button>
             </Dialog.Close>
-            <Button theme="active" aria-label="Create" onPress={handleCreateGroup}>
-              {isPending ? <Spinner color={'#fff'} /> : 'Create'}
+            <Button theme="active" aria-label="Add" onPress={handleAddExercise}>
+              {isPending ? <Spinner color={'#fff'} /> : 'Add'}
             </Button>
           </XStack>
           <Unspaced>

@@ -22,28 +22,18 @@ export const useGroupMembersSubscription = (id: string) => {
   });
 };
 
-// export const updateGroupAdminSubscription = (id: number) => {
-//   const queryClient = useQueryClient();
+export const useExerciseSubscription = (id: string | undefined) => {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const exerciseSub = supabase
+      .channel('custom-all-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'exercises' }, (payload) => {
+        queryClient.invalidateQueries({ queryKey: ['group', id] });
+      })
+      .subscribe();
 
-//   useEffect(() => {
-//     const updateGroupAdminSub = supabase
-//       .channel('custom-filter-channel')
-//       .on(
-//         'postgres_changes',
-//         {
-//           event: 'UPDATE',
-//           schema: 'public',
-//           table: 'orders',
-//           filter: `id=eq.${id}`,
-//         },
-//         (payload) => {
-//           queryClient.invalidateQueries({ queryKey: ['orders', id] });
-//         }
-//       )
-//       .subscribe();
-
-//     return () => {
-//       updateGroupAdminSub.unsubscribe();
-//     };
-//   }, []);
-// };
+    return () => {
+      exerciseSub.unsubscribe();
+    };
+  });
+};
