@@ -2,15 +2,10 @@ import React, { ReactElement, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Adapt, Button, Dialog, Sheet, Unspaced, XStack, YStack, Text, Spinner } from 'tamagui';
 import InputField from './InputField';
-import TextAreaField from './TextAreaField';
 import { useAuth } from '@/api/auth';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Pressable } from 'react-native';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { useAddExercise } from '@/api/exercises';
-
-dayjs.extend(relativeTime);
 
 interface CreateGroupDialogProps {
   trigger: ReactElement;
@@ -23,6 +18,7 @@ export function AddExercisesDialog({ trigger, groupId }: CreateGroupDialogProps)
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [validationError, setValidationError] = useState('');
 
   const user_id = sessionData?.session?.user.id;
 
@@ -42,7 +38,16 @@ export function AddExercisesDialog({ trigger, groupId }: CreateGroupDialogProps)
 
   const { mutate: addExercise, isPending, error: addError } = useAddExercise();
 
+  function validateInput() {
+    if (title === '') {
+      setValidationError('Please fill in a title');
+      return false;
+    }
+    return true;
+  }
+
   const handleAddExercise = () => {
+    if (!validateInput()) return;
     addExercise(
       {
         title,
@@ -53,6 +58,9 @@ export function AddExercisesDialog({ trigger, groupId }: CreateGroupDialogProps)
       {
         onSuccess: () => {
           setOpen(false);
+          setTitle('');
+          setValidationError('');
+          setDate(new Date());
         },
       }
     );
@@ -100,8 +108,14 @@ export function AddExercisesDialog({ trigger, groupId }: CreateGroupDialogProps)
             theme={'light'}
             style={{
               fontSize: 15,
-              color: 'red',
-            }}></Dialog.Description>
+              color: validationError || addError ? 'red' : 'gray',
+            }}>
+            {validationError
+              ? validationError
+              : addError
+                ? addError.message
+                : 'Add exercise title and the date of the exercise'}
+          </Dialog.Description>
 
           <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
             <Text fontSize="$6" fontWeight="600" marginBottom="$2">
@@ -111,7 +125,7 @@ export function AddExercisesDialog({ trigger, groupId }: CreateGroupDialogProps)
           </YStack>
           <YStack width="100%" maxWidth={400} paddingHorizontal="$2">
             <Text fontSize="$6" fontWeight="600" marginBottom="$2">
-              Exercise Date (Optional)
+              Exercise Date
             </Text>
             <Pressable onPress={showDatepicker}>
               <InputField value={date.toDateString()} disabled />

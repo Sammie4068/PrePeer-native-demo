@@ -1,24 +1,29 @@
 import { Button, Input, Separator, XStack } from 'tamagui';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { AddExercisesDialog } from './AddExercisesDialog';
+import InputField from './InputField';
 
 export default function TabSearchBar({
   placeholder,
   buttonText,
   groupId,
+  value,
+  onChange,
 }: {
   placeholder: string;
   buttonText?: string;
   groupId?: string;
+  value: string;
+  onChange: (e: any) => void;
 }) {
   return (
     <XStack gap={2}>
-      <Input
-        backgroundColor={'#fff'}
-        color={'#000'}
+      <InputField
         flex={1}
         placeholder={placeholder}
         marginBottom={20}
+        value={value}
+        onChangeText={onChange}
       />
       {buttonText && (
         <AddExercisesDialog

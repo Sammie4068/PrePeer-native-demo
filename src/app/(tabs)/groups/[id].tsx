@@ -10,6 +10,7 @@ import { useGroupMembersSubscription } from '@/api/subscribers';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useQueryClient } from '@tanstack/react-query';
 import GroupTabs from '@/components/GroupTabs';
+import { ScrollView } from 'tamagui';
 
 export default function GroupScreen() {
   const { id: idStr } = useLocalSearchParams();
@@ -127,8 +128,11 @@ export default function GroupScreen() {
               <Text fontWeight={'500'}>Created By</Text>
               <Avatar circular size="$5">
                 <Avatar.Image
-                  accessibilityLabel="Cam"
-                  src="https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80"
+                  accessibilityLabel="user-profile-picture"
+                  src={
+                    adminData?.avatar_url ||
+                    'https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80'
+                  }
                 />
                 <Avatar.Fallback backgroundColor="#000" />
               </Avatar>
