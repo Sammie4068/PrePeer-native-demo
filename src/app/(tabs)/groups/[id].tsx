@@ -143,7 +143,7 @@ export default function GroupScreen() {
             </View>
             <View>
               <Text fontSize={30} fontWeight={'700'} textAlign="center">
-                0
+                {groupData?.totalExercises}
               </Text>
               <Text fontWeight={'600'} color={'grey'}>
                 Exercises

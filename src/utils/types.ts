@@ -24,4 +24,6 @@ export interface Group {
   created_by: string;
   members: Member[];
   totalUsers: number;
+  exercises: Tables<'exercises'>[] | any;
+  totalExercises: number;
 }

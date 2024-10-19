@@ -55,7 +55,6 @@ export function useFetchGroupById(id: string) {
         .select('*')
         .eq('id', id)
         .single();
-
       if (groupError) throw new Error(groupError.message);
       if (!groupData) throw new Error('Group not found');
 
@@ -69,8 +68,23 @@ export function useFetchGroupById(id: string) {
         `
         )
         .eq('group_id', id);
-
       if (membersError) throw new Error(membersError.message);
+
+      const { data: exercises, error: exercisesError } = await supabase
+        .from('exercises')
+        .select(
+          `
+          *,
+          questions:questions(count)
+        `
+        )
+        .eq('group_id', id);
+      if (exercisesError) throw new Error(exercisesError.message);
+
+      const exercisesWithQuestionCounts = exercises.map((exercise) => ({
+        ...exercise,
+        totalQuestions: exercise.questions[0].count,
+      }));
 
       const groupMembers: Member[] = (members as any[]).map(({ profiles, is_admin }) => ({
         id: profiles.id,
@@ -83,6 +97,8 @@ export function useFetchGroupById(id: string) {
         ...groupData,
         members: groupMembers,
         totalUsers: groupMembers.length,
+        exercises: exercisesWithQuestionCounts,
+        totalExercises: exercisesWithQuestionCounts.length,
       };
     },
   });
@@ -133,34 +149,6 @@ export function useCreateGroup() {
     },
   });
 }
-
-// export const useFetchGroupMembers = (groupId: string, creatorId: string) => {
-//   return useQuery({
-//     queryKey: ['groupMembers', groupId],
-//     queryFn: async () => {
-//       const { data: groupMembers, error } = await supabase
-//         .from('groupmembers')
-//         .select('user_id, is_admin, users(id, full_name, avatar_url, email, created_at)')
-//         .eq('group_id', groupId);
-
-//       if (error) throw new Error(error.message);
-
-//       const members = groupMembers.map((member) => ({
-//         ...member.users,
-//         is_admin: member.is_admin,
-//       }));
-
-//       // Sort members: creator first, then admins, then regular members
-//       return members.sort((a, b) => {
-//         if (a.id === creatorId) return -1;
-//         if (b.id === creatorId) return 1;
-//         if (a.is_admin && !b.is_admin) return -1;
-//         if (!a.is_admin && b.is_admin) return 1;
-//         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-//       });
-//     },
-//   });
-// };
 
 export function useJoinGroup() {
   return useMutation({

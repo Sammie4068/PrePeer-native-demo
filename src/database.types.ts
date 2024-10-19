@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      exercises: {
+        Row: {
+          created_at: string
+          created_by: string
+          date: string
+          group_id: string
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          date: string
+          group_id: string
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          date?: string
+          group_id?: string
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercises_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       groupmembers: {
         Row: {
           group_id: string
@@ -106,6 +148,44 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      questions: {
+        Row: {
+          answer: string
+          created_at: string
+          exercise_id: string
+          id: string
+          options: string | null
+          question: string
+          type: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          exercise_id: string
+          id?: string
+          options?: string | null
+          question: string
+          type: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          exercise_id?: string
+          id?: string
+          options?: string | null
+          question?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

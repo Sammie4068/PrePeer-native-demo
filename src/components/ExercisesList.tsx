@@ -1,7 +1,15 @@
 import { Pressable } from 'react-native';
 import { Text, View } from 'tamagui';
 
-export default function ExercisesList() {
+export default function ExercisesList({
+  title,
+  date,
+  questionCount,
+}: {
+  title: string;
+  date: string;
+  questionCount: number;
+}) {
   return (
     <Pressable
       onPress={() => console.log('Pressing issues')}
@@ -24,11 +32,11 @@ export default function ExercisesList() {
           backgroundColor={pressed ? '#f0f0f0' : 'white'}>
           <View>
             <Text fontSize={18} fontWeight={'600'}>
-              CYB 400 Examination
+              {title}
             </Text>
-            <Text color={'gray'}>30 Questions</Text>
+            <Text color={'gray'}>{`${questionCount} Questions`}</Text>
           </View>
-          <Text>2020</Text>
+          <Text>{new Date(date).getFullYear()}</Text>
         </View>
       )}
     </Pressable>

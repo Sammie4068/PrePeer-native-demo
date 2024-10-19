@@ -4,6 +4,7 @@ import UsersList from './UsersList';
 import type { Group } from '@/utils/types';
 import ExercisesList from './ExercisesList';
 import TabSearchBar from './TabSearchBar';
+import { Text } from 'tamagui';
 
 const TabsContent = (props: TabsContentProps) => {
   return (
@@ -25,6 +26,8 @@ const TabsContent = (props: TabsContentProps) => {
 
 function GroupTabs({ groupData }: { groupData: Group | undefined }) {
   const groupMembers = groupData?.members;
+  const groupExercises = groupData?.exercises;
+  // console.log(JSON.stringify(groupData, null, 2));
 
   return (
     <Tabs
@@ -32,7 +35,7 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
       orientation="horizontal"
       flexDirection="column"
       width={'100%'}
-      height={600}
+      height={500}
       backgroundColor={'whitesmoke'}
       overflow="hidden"
       borderColor="$borderColor">
@@ -49,15 +52,23 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
       </Tabs.List>
       <Separator />
       <TabsContent value="tab1">
-        <YStack gap={10}>
+        <YStack gap={10} flex={1}>
           <TabSearchBar placeholder="Search exercises..." buttonText="Add Exercises" />
-          <ExercisesList />
-          <ExercisesList />
-          <ExercisesList />
-          <ExercisesList />
-          <ExercisesList />
-          <ExercisesList />
-          <ExercisesList />
+          {groupExercises?.length !== 0 ? (
+            <FlatList
+              data={groupExercises}
+              renderItem={({ item }) => (
+                <ExercisesList
+                  title={item.title}
+                  date={item.date}
+                  questionCount={item.totalQuestions}
+                />
+              )}
+              contentContainerStyle={{ padding: 10, gap: 10 }}
+            />
+          ) : (
+            <Text m="auto">No Exercises yet, add exercises</Text>
+          )}
         </YStack>
       </TabsContent>
       <TabsContent value="tab2">
