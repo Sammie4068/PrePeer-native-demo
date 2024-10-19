@@ -31,7 +31,7 @@ export default function ExercisesList({
           alignItems={'center'}
           backgroundColor={pressed ? '#f0f0f0' : 'white'}>
           <View>
-            <Text fontSize={18} fontWeight={'600'}>
+            <Text fontSize={16} fontWeight={'600'}>
               {title}
             </Text>
             <Text color={'gray'}>{`${questionCount} Questions`}</Text>

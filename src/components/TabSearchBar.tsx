@@ -6,7 +6,7 @@ export default function TabSearchBar({
   buttonText,
 }: {
   placeholder: string;
-  buttonText: string;
+  buttonText?: string;
 }) {
   return (
     <XStack gap={2}>
@@ -17,10 +17,12 @@ export default function TabSearchBar({
         placeholder={placeholder}
         marginBottom={20}
       />
-      <Button color={'#fff'} borderColor={'#000'}>
-        <FontAwesome6 name="add" size={24} color="#fff" />
-        {buttonText}
-      </Button>
+      {buttonText && (
+        <Button color={'#fff'} borderColor={'#000'}>
+          <FontAwesome6 name="add" size={24} color="#fff" />
+          {buttonText}
+        </Button>
+      )}
     </XStack>
   );
 }

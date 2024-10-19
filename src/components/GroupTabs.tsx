@@ -72,7 +72,8 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
         </YStack>
       </TabsContent>
       <TabsContent value="tab2">
-        <YStack>
+        <YStack gap={10} flex={1}>
+          <TabSearchBar placeholder="Search members..." />
           <FlatList
             data={groupMembers}
             renderItem={({ item }) => (

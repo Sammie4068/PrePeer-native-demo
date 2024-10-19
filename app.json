@@ -18,7 +18,7 @@
     "icon": "./src/assets/prepeer.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/prepeer.png",
+      "image": "./src/assets/prepeerSplash.png",
       "resizeMode": "native",
       "backgroundColor": "#ffffff",
       "width": 50,
