@@ -1,5 +1,5 @@
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
 import { TamaguiProvider } from 'tamagui';
 
@@ -21,12 +21,15 @@ export default function RootLayout() {
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
+  const segments = useSegments();
 
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+    const path = '/' + segments.join('/');
+    console.log(`Navigated to: ${path}`);
+  }, [loaded, segments]);
 
   if (!loaded) return null;
 

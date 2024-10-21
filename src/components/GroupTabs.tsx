@@ -100,6 +100,7 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
                 data={renderedExercises}
                 renderItem={({ item }) => (
                   <ExercisesList
+                    groupId={groupData?.id}
                     id={item.id}
                     title={item.title}
                     date={item.date}

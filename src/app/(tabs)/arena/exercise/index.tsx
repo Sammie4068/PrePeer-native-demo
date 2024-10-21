@@ -2,12 +2,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { View, Text } from 'tamagui';
 
 export default function ExercisePage() {
-  const searchItems = useLocalSearchParams();
-  console.log(searchItems);
+  const { id, groupId } = useLocalSearchParams();
 
   return (
     <View>
-      <Text>Exercise Page</Text>
+      <Text>exercise-id: {id}</Text>
+      <Text>group-id: {groupId}</Text>
     </View>
   );
 }

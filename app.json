@@ -15,7 +15,7 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./src/assets/prepeerSplash.png",
+    "icon": "./src/assets/prepeer.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./src/assets/prepeerSplash.png",
@@ -30,7 +30,7 @@
       "supportsTablet": true,
       "splash": {
         "image": "./src/assets/prepeerSplash.png",
-        "resizeMode": "native",
+        "resizeMode": "cover",
         "backgroundColor": "#ffffff",
         "width": 50,
         "height": 50,
@@ -39,7 +39,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/prepeerSplash.png",
+        "foregroundImage": "./src/assets/prepeer.png",
         "backgroundColor": "#ffffff"
       },
       "splash": {
