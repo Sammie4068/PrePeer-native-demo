@@ -22,6 +22,7 @@ export default function TabLayout() {
         ),
       }}>
       <Tabs.Screen name="index" options={{ href: null }} />
+      <Tabs.Screen name="exercise" options={{ href: null }} />
       <Tabs.Screen
         name="home"
         options={{

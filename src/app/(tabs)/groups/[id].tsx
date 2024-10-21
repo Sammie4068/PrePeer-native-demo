@@ -10,7 +10,6 @@ import { useGroupMembersSubscription } from '@/api/subscribers';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useQueryClient } from '@tanstack/react-query';
 import GroupTabs from '@/components/GroupTabs';
-import { ScrollView } from 'tamagui';
 
 export default function GroupScreen() {
   const { id: idStr } = useLocalSearchParams();
@@ -25,6 +24,7 @@ export default function GroupScreen() {
     isPending: leaveGroupPending,
     error: leaveGroupError,
   } = useLeaveGroup();
+
   const queryClient = useQueryClient();
 
   const userId = sessionData?.user?.id;

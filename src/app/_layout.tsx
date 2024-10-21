@@ -6,7 +6,6 @@ import { TamaguiProvider } from 'tamagui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import config from '../../tamagui.config';
-import { ToastProvider, ToastViewport } from '@tamagui/toast';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,7 +32,6 @@ export default function RootLayout() {
 
   return (
     <TamaguiProvider config={config}>
-      {/* <ToastProvider> */}
       <QueryClientProvider client={queryClient}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -41,8 +39,6 @@ export default function RootLayout() {
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         </Stack>
       </QueryClientProvider>
-      {/* <ToastViewport />
-      </ToastProvider> */}
     </TamaguiProvider>
   );
 }
