@@ -32,7 +32,6 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
 
   useExerciseSubscription(groupData?.id);
 
-  const groupMembers = groupData?.members;
   const groupExercises = groupData?.exercises?.slice().sort((a: any, b: any) => {
     if (a.created_at && b.created_at) {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -41,6 +40,8 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
   });
   const [renderedExercises, setRenderedExercises] = useState<Tables<'exercises'>[] | any>([]);
   const [renderedMembers, setRenderedMembers] = useState<Member[] | undefined>([]);
+
+  // console.log(JSON.stringify(renderedMembers, null, 2));
 
   useEffect(() => {
     if (groupData?.exercises) {
@@ -100,7 +101,7 @@ function GroupTabs({ groupData }: { groupData: Group | undefined }) {
                 data={renderedExercises}
                 renderItem={({ item }) => (
                   <ExercisesList
-                    groupId={groupData?.id}
+                    groupId={item.group_id}
                     id={item.id}
                     title={item.title}
                     date={item.date}

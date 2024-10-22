@@ -21,7 +21,7 @@ export default function ExercisesList({
     <Pressable
       onPress={() =>
         router.push({
-          pathname: `./(tabs)/arena/exercise/[id]`,
+          pathname: `/arena/exercise`,
           params: { id, groupId },
         })
       }

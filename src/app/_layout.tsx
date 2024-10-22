@@ -21,15 +21,15 @@ export default function RootLayout() {
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
-  const segments = useSegments();
+  // const segments = useSegments();
 
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-    const path = '/' + segments.join('/');
-    console.log(`Navigated to: ${path}`);
-  }, [loaded, segments]);
+    // const path = '/' + segments.join('/');
+    // console.log(`Navigated to: ${path}`);
+  }, [loaded]);
 
   if (!loaded) return null;
 
