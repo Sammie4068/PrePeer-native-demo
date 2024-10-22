@@ -70,18 +70,25 @@ export default function ExercisePage() {
           </View>
         </XStack>
 
-        <XStack alignItems="center" justifyContent="space-between">
-          <Text fontSize={20} fontWeight={'600'}>
-            30 Questions
-          </Text>
-          <Button
-            backgroundColor={'transparent'}
-            borderColor={'#000'}
-            color={'#000'}
-            iconAfter={<FontAwesome6 name="add" size={24} color="#000" />}>
-            Add Button
-          </Button>
-        </XStack>
+        <YStack borderTopColor={'#000'}>
+          <XStack alignItems="center" justifyContent="space-between" borderBottomColor={'#000'}>
+            <Text fontSize={20} fontWeight={'600'}>
+              30 Questions
+            </Text>
+            <Button
+              backgroundColor={'transparent'}
+              borderColor={'#000'}
+              color={'#000'}
+              iconAfter={<FontAwesome6 name="add" size={24} color="#000" />}>
+              Add question
+            </Button>
+          </XStack>
+
+          <View>
+            <Text>1</Text>
+            <Text>What is a noun?</Text>
+          </View>
+        </YStack>
       </YStack>
     </Main>
   );
