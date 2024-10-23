@@ -1,5 +1,6 @@
 import { useAuth } from '@/api/auth';
 import { useFetchGroupById } from '@/api/groups';
+import QuestionCard from '@/components/questionCard';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -37,7 +38,7 @@ export default function ExercisePage() {
 
   return (
     <Main>
-      <YStack p={24}>
+      <YStack p={24} gap={10}>
         <XStack justifyContent="space-between">
           <View gap={10}>
             <Text fontSize={25} fontWeight={'700'}>
@@ -70,12 +71,13 @@ export default function ExercisePage() {
           </View>
         </XStack>
 
-        <YStack borderTopColor={'#000'}>
+        <YStack borderTopColor={'#000'} gap={20}>
           <XStack alignItems="center" justifyContent="space-between" borderBottomColor={'#000'}>
             <Text fontSize={20} fontWeight={'600'}>
               30 Questions
             </Text>
             <Button
+              variant="outlined"
               backgroundColor={'transparent'}
               borderColor={'#000'}
               color={'#000'}
@@ -84,10 +86,13 @@ export default function ExercisePage() {
             </Button>
           </XStack>
 
-          <View>
-            <Text>1</Text>
-            <Text>What is a noun?</Text>
-          </View>
+          <YStack gap={5}>
+            <QuestionCard />
+            <QuestionCard />
+            <QuestionCard />
+            <QuestionCard />
+            <QuestionCard />
+          </YStack>
         </YStack>
       </YStack>
     </Main>

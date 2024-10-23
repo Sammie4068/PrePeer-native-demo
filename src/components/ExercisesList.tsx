@@ -29,13 +29,18 @@ export default function ExercisesList({
         {
           opacity: pressed ? 0.7 : 1,
           transform: [{ scale: pressed ? 0.98 : 1 }],
+          backgroundColor: 'white',
+          borderRadius: 12,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 2,
         },
       ]}>
       {({ pressed }) => (
         <View
-          borderWidth={1}
           borderRadius={10}
-          borderBlockColor={'#000'}
           paddingVertical={10}
           paddingHorizontal={15}
           flexDirection={'row'}
