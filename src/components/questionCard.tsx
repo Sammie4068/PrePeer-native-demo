@@ -1,7 +1,14 @@
 import { Pressable } from 'react-native';
 import { View, Text, XStack, YStack } from 'tamagui';
 
-export default function QuestionCard() {
+export default function QuestionCard({
+  questionData,
+}: {
+  questionData: {
+    question: string;
+    question_number: number;
+  };
+}) {
   return (
     <Pressable
       style={({ pressed }) => ({
@@ -27,7 +34,7 @@ export default function QuestionCard() {
             borderColor="$gray8"
             backgroundColor="$gray1">
             <Text color="$gray12" fontWeight="600" fontSize={14}>
-              2
+              {questionData.question_number}
             </Text>
           </View>
 
@@ -38,11 +45,7 @@ export default function QuestionCard() {
             fontSize={15}
             lineHeight={20}
             color="#000">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laborum odio recusandae,
-            repudiandae modi, harum sit libero voluptatum facere at repellendus nostrum vel quo? Cum
-            debitis adipisci quibusdam illum cumque non laudantium consectetur saepe, a illo?
-            Facilis laborum aspernatur veniam quasi ducimus, vitae, fugit nostrum aliquid
-            consequuntur totam eveniet libero quibusdam.
+            {questionData.question}
           </Text>
         </XStack>
       )}

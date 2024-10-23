@@ -20,3 +20,27 @@ export function useAddExercise() {
     },
   });
 }
+
+export function useGetExerciseById(id: string) {
+  return useQuery({
+    queryKey: ['exercise', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('exercises')
+        .select(
+          `
+          *,
+          questions!exercise_id(*),
+          profiles!created_by(*)
+        `
+        )
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+  });
+}
