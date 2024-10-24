@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
-    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/datetimepicker": "^8.0.1",
     "@react-navigation/native": "^6.1.7",
-    "@supabase/supabase-js": "^2.45.4",
+    "@supabase/supabase-js": "^2.45.6",
     "@tamagui/font-inter": "1.74.8",
     "@tamagui/lucide-icons": "^1.114.3",
     "@tamagui/react-native-media-driver": "1.74.8",
@@ -44,7 +44,6 @@
     "react-native-screens": "3.31.1",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
-    "supabase": "^1.207.9",
     "supabase-cli": "^0.0.21",
     "tamagui": "1.74.8"
   },
