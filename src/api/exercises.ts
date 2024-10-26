@@ -1,6 +1,6 @@
 import { supabase } from '@/utils/supabase';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { InsertTables } from '@/utils/types';
+import { Exercise, InsertTables } from '@/utils/types';
 
 export function useAddExercise() {
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ export function useAddExercise() {
 }
 
 export function useGetExerciseById(id: string) {
-  return useQuery({
+  return useQuery<Exercise>({
     queryKey: ['exercise', id],
     queryFn: async () => {
       const { data, error } = await supabase

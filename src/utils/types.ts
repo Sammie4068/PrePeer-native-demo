@@ -27,3 +27,8 @@ export interface Group {
   exercises: Tables<'exercises'>[] | any;
   totalExercises: number;
 }
+
+export interface Exercise extends Tables<'exercises'> {
+  questions: Tables<'questions'>[];
+  profiles: Tables<'profiles'>[] | any;
+}

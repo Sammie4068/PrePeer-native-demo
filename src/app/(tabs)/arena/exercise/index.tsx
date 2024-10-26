@@ -25,7 +25,6 @@ export default function ExercisePage() {
     isLoading: exerciseLoading,
     error: exerciseError,
   } = useGetExerciseById(exercise_id);
-  console.log('🚀 ~ ExercisePage ~ exerciseData:', JSON.stringify(exerciseData, null, 2));
 
   const userId = sessionData?.user?.id;
   const memberIds = groupData?.members.map((mem) => mem.id);
@@ -97,7 +96,6 @@ export default function ExercisePage() {
               <Avatar.Image
                 accessibilityLabel="user-profile-picture"
                 src={
-                  exerciseData?.profiles.avatar_url ||
                   'https://images.unsplash.com/photo-1548142813-c348350df52b?&w=150&h=150&dpr=2&q=80'
                 }
               />

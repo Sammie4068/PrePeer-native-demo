@@ -14,7 +14,7 @@ export default function QuestionCard({
       style={({ pressed }) => ({
         opacity: pressed ? 0.7 : 1,
         transform: [{ scale: pressed ? 0.98 : 1 }],
-        backgroundColor: 'white',
+        backgroundColor: '#f5f5f5',
         borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -23,7 +23,7 @@ export default function QuestionCard({
         elevation: 2,
       })}>
       {({ pressed }) => (
-        <XStack padding={16} gap={12} alignItems="center" width="100%">
+        <XStack padding={16} gap={12} alignItems="center">
           <View
             borderWidth={1}
             borderRadius={20}
